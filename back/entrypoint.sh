@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# clear .env and .env.test since DATABASE_URL will be reconstructed
+echo "" > .env
+echo "" > .env.test
+
 POSTGRES_USER=$(cat /run/secrets/postgres_user)
 POSTGRES_PASSWORD=$(cat /run/secrets/postgres_password)
 POSTGRES_DB=$(cat /run/secrets/postgres_db)

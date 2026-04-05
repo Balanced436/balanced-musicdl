@@ -1,14 +1,28 @@
 generator client {
   provider = "prisma-client"
-    output   = "../generated/prisma"
-
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+enum DownloadStatus {
+  QUEUED
+  DOWNLOADING
+  PROCESSING 
+  FAILED
+}
 
-model Source {
-  id          Int    @id @default(autoincrement())
-  description String
+model Song {
+  id          String         @id @default(cuid())
+  url         String         @unique
+  title       String?  
+  artist      String?
+  duration    Int?
+  status      DownloadStatus @default(QUEUED)
+
+   
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
 }
