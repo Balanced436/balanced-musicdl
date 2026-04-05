@@ -4,59 +4,79 @@ import { StatusCodes } from "http-status-codes";
 
 export const songRouter = Router();
 
-songRouter.post("/songs", async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { url, title, artist, duration } = req.body;
-    const song = await prisma.song.create({
-      data: { url, title, artist, duration },
-    });
-    res.status(StatusCodes.CREATED).json(song);
-  } catch (error) {
-    res.status(StatusCodes.BAD_REQUEST).json({ error: "Could not create song. Ensure URL is unique." });
-  }
-});
+songRouter.post(
+  "/songs",
+  async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { url, title, artist, duration } = req.body;
+      const song = await prisma.song.create({
+        data: { url, title, artist, duration },
+      });
+      res.status(StatusCodes.CREATED).json(song);
+    } catch (error) {
+      res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: "Could not create song. Ensure URL is unique." });
+    }
+  },
+);
 
-songRouter.get("/songs", async (_req: Request, res: Response):Promise<void> => {
-  const songs = await prisma.song.findMany();
-  res.json(songs);
-});
+songRouter.get(
+  "/songs",
+  async (_req: Request, res: Response): Promise<void> => {
+    const songs = await prisma.song.findMany();
+    res.json(songs);
+  },
+);
 
-songRouter.get("/songs/:id", async (req: Request, res: Response):Promise<void> => {
-  const { id } = req.params;
-  const song = await prisma.song.findUnique({
-    where: { id },
-  });
-
-  if (!song) res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found" });
-  res.json(song);
-});
-
-songRouter.patch("/songs/:id", async (req: Request, res: Response):Promise<void> => {
-  const { id } = req.params;
-  const { title, artist, duration, status } = req.body;
-
-  try {
-    const updatedSong = await prisma.song.update({
-      where: { id },
-      data: { title, artist, duration, status },
-    });
-    res.json(updatedSong);
-  } catch (error) {
-    res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found or update failed" });
-  }
-});
-
-songRouter.delete("/songs/:id", async (req: Request, res: Response):Promise<void> => {
-  const { id } = req.params;
-
-  try {
-    await prisma.song.delete({
+songRouter.get(
+  "/songs/:id",
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const song = await prisma.song.findUnique({
       where: { id },
     });
-    res.status(StatusCodes.NO_CONTENT).send();
-   } catch (error) {
-    res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found" });
-  }
-});
+
+    if (!song)
+      res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found" });
+    res.json(song);
+  },
+);
+
+songRouter.patch(
+  "/songs/:id",
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const { title, artist, duration, status } = req.body;
+
+    try {
+      const updatedSong = await prisma.song.update({
+        where: { id },
+        data: { title, artist, duration, status },
+      });
+      res.json(updatedSong);
+    } catch (error) {
+      res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: "Song not found or update failed" });
+    }
+  },
+);
+
+songRouter.delete(
+  "/songs/:id",
+  async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    try {
+      await prisma.song.delete({
+        where: { id },
+      });
+      res.status(StatusCodes.NO_CONTENT).send();
+    } catch (error) {
+      res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found" });
+    }
+  },
+);
 
 export default songRouter;
