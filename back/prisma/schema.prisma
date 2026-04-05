@@ -15,11 +15,10 @@ enum DownloadStatus {
 
 model Song {
   id          String         @id @default(cuid())
-  url         String         @unique
-  title       String?  
+  album       String?
   artist      String?
-  duration    Int?
-  status      DownloadStatus @default(QUEUED)
+  title       String?
+  fileName String
 
    
   createdAt   DateTime       @default(now())
