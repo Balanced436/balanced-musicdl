@@ -16,6 +16,10 @@ POSTGRES_DB_TEST="${POSTGRES_DB}_test"
 DATABASE_URL_TEST="postgresql://${POSTGRES_USER_TEST}:${POSTGRES_PASSWORD_TEST}@${POSTGRES_HOST}:5432/${POSTGRES_DB_TEST}?schema=public"
 echo "DATABASE_URL=$DATABASE_URL_TEST" >> .env.test
 
+echo "SONGS_DIR=$SONGS_DIR" >> .env
+echo "SONGS_DIR=$SONGS_DIR" >> .env.test
+mkdir -p "$SONGS_DIR"
+
 npm install
 npx prisma migrate dev --name init
 npx prisma generate

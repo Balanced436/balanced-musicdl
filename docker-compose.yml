@@ -51,6 +51,9 @@ services:
       POSTGRES_USER_FILE: /run/secrets/postgres_user 
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB_FILE: /run/secrets/postgres_db
+      SONGS_DIR: /data/music
+    volumes:
+    - ~/Musique:/data/music
     secrets:
       - postgres_user
       - postgres_password
