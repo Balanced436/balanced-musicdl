@@ -1,5 +1,5 @@
 {
-  "name": "insights",
+  "name": "balanced-musicdl",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,8 @@
     "push:dev": "npx prisma db push --accept-data-loss",
     "push:test": "dotenv -e .env.test -- npx prisma db push --accept-data-loss",
     "seed:dev": "ts-node prisma/seed.ts",
-    "seed:test": "dotenv -e .env.test -- ts-node prisma/seed.ts"
+    "seed:test": "dotenv -e .env.test -- ts-node prisma/seed.ts",
+    "parseSong:dev": "ts-node src/scripts/parseSongs.ts"
   },
   "keywords": [],
   "author": "",
@@ -63,6 +64,7 @@
     "node-id3": "^0.2.9",
     "nodemon": "^3.1.14",
     "pg": "^8.20.0",
-    "socket.io": "^4.8.3"
+    "socket.io": "^4.8.3",
+    "winston": "^3.19.0"
   }
 }
