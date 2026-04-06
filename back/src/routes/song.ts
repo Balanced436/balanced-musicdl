@@ -8,9 +8,14 @@ songRouter.post(
   "/songs",
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const { url, title, artist, duration } = req.body;
+      const { filename, title, artist, album } = req.body;
       const song = await prisma.song.create({
-        data: { url, title, artist, duration },
+        data: {
+          album: album,
+          artist: artist,
+          title: title,
+          fileName: filename,
+        },
       });
       res.status(StatusCodes.CREATED).json(song);
     } catch (error) {
@@ -47,12 +52,12 @@ songRouter.patch(
   "/songs/:id",
   async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
-    const { title, artist, duration, status } = req.body;
+    const { title, artist, album } = req.body;
 
     try {
       const updatedSong = await prisma.song.update({
         where: { id },
-        data: { title, artist, duration, status },
+        data: { artist: artist, album: album, title: title },
       });
       res.json(updatedSong);
     } catch (error) {
