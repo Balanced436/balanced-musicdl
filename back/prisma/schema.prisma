@@ -6,12 +6,6 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-enum DownloadStatus {
-  QUEUED
-  DOWNLOADING
-  PROCESSING 
-  FAILED
-}
 
 model Song {
   id          String         @id @default(cuid())
@@ -25,3 +19,21 @@ model Song {
   updatedAt   DateTime       @updatedAt
 
 }
+enum DownloadStatus {
+  PENDING
+  ANALYZING
+  AWAITING_CONFIRMATION
+  QUEUED_FOR_DOWNLOAD
+  DOWNLOADING
+  COMPLETED
+  FAILED
+}
+
+model Download {
+  id        String         @id @default(cuid())
+  videoId   String         @map("v")
+  title     String?
+  status    DownloadStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  }
