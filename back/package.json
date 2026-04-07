@@ -14,7 +14,8 @@
     "seed:dev": "ts-node prisma/seed.ts",
     "seed:test": "dotenv -e .env.test -- ts-node prisma/seed.ts",
     "parseSong:dev": "ts-node src/scripts/parseSongs.ts",
-    "parseSong:test": "dotenv -e .env.test --ts-node src/scripts/parseSongs.ts"
+    "parseSong:test": "dotenv -e .env.test --ts-node src/scripts/parseSongs.ts",
+    "startWorkers:dev": "ts-node src/scripts/startWorkers.ts"
   },
   "keywords": [],
   "author": "",

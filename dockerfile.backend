@@ -6,7 +6,14 @@ COPY back/ .
 
 COPY back/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
+RUN apt-get update && apt-get install -y \
+    curl \
+    ffmpeg \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
 
+RUN chmod a+rx /usr/local/bin/yt-dlp
 
 EXPOSE 4000
 EXPOSE 9229
