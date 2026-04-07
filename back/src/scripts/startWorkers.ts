@@ -1,7 +1,7 @@
-import {metadataWorker} from "../utils/workers";
+import { metadataWorker } from "../utils/workers";
 async function main() {
-    metadataWorker().catch(err => {
-        console.error("Need to restart the worker", err);
-    });
+  metadataWorker().catch((err) => {
+    console.error("Need to restart the worker", err);
+  });
 }
-main()
+main();
