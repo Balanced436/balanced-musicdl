@@ -3,19 +3,17 @@ import logger from "./logger";
 import { downloadYouTubeAudio, getYouTubeTitle } from "./ytb";
 
 export const metadataWorker = async () => {
-  logger.info("Metadata worker started");
-
+  logger.info("metadataWorker: started");
   while (true) {
-    logger.info(`Checking for pending jobs...`);
     const job = await prisma.download.findFirst({
       where: { status: DownloadStatus.PENDING },
       orderBy: { createdAt: "asc" },
     });
 
     if (job) {
-      logger.info(`Found job: ${job.id} for video ID: ${job.videoId}`);
+      logger.info(`metadataWorker: ${job.id}`);
+
       try {
-        logger.info(`Processing metadata for: ${job.videoId}`);
 
         await prisma.download.update({
           where: { id: job.id },
@@ -32,9 +30,8 @@ export const metadataWorker = async () => {
           },
         });
 
-        logger.info(`Title found: ${title}. Awaiting user`);
       } catch (error) {
-        logger.error(`Error fetching metadata for ${job.id}`, error);
+        logger.error(`metadataWorker: error fetching metadata for ${job.id} ${error}`);
         await prisma.download.update({
           where: { id: job.id },
           data: { status: DownloadStatus.FAILED },
@@ -47,8 +44,10 @@ export const metadataWorker = async () => {
 };
 
 export const downloadWorker = async () => {
+  logger.info("downloadWorker: started");
+
   while (true) {
-    logger.info(`Checking for QUEUED_FOR_DOWNLOAD jobs...`);
+    //logger.info(`Checking for QUEUED_FOR_DOWNLOAD jobs...`);
     const job = await prisma.download.findFirst({
       where: { status: DownloadStatus.QUEUED_FOR_DOWNLOAD },
       orderBy: { createdAt: "asc" },
@@ -56,7 +55,7 @@ export const downloadWorker = async () => {
 
     if (job) {
       try {
-        logger.info(`Starting download for: ${job.videoId}`);
+        logger.info(`downloadWorker: ${job.title} - ${job.id}`);
         await prisma.download.update({
           where: { id: job.id },
           data: {
@@ -66,26 +65,25 @@ export const downloadWorker = async () => {
 
         const path = process.env.SONGS_DIR || "/data/music";
 
-        const filePath = `${path}/%(title)s.%(ext)s`;
-
-        logger.info(job.videoId);
+        const filePath = `${path}/${job.title}.mp3`;
+        logger.info(filePath)
         const res: string = await downloadYouTubeAudio(job.videoId, filePath);
         await prisma.download.update({
           where: { id: job.id },
           data: {
             status: DownloadStatus.COMPLETED,
-            filePath: res,
           },
         });
-        logger.info(`Download completed for: ${job.videoId}, saved to ${res}`);
-      } catch (e) {
+
+
+      } catch (error) {
         await prisma.download.update({
           where: { id: job.id },
           data: {
             status: DownloadStatus.FAILED,
           },
         });
-        logger.error(`Error downloading ${job.id}`, e);
+        logger.error(`downloadWorker: Error downloading ${job.id} ${error}`);
       }
     }
     await new Promise((resolve) => setTimeout(resolve, job ? 100 : 2000));

@@ -21,13 +21,14 @@ export async function downloadYouTubeAudio(
   videoId: string,
   outputPath: string,
 ) {
+  logger.info(`downloadYouTubeAudio: ${videoId}, outputPath: ${outputPath}`);
   return new Promise<string>((resolve, reject) => {
     const process = spawn("yt-dlp", [
       "-x",
       "--audio-format",
       "mp3",
       "--output",
-      outputPath,
+      `${outputPath}`,
       "--audio-quality",
       "0",
       "--write-thumbnail",
@@ -36,7 +37,10 @@ export async function downloadYouTubeAudio(
     ]);
 
     process.on("close", (code) => {
-      if (code === 0) resolve(outputPath);
+      if (code === 0) {
+        logger.info(`downloadYouTubeAudio: download completed ${outputPath}`);
+        resolve(outputPath);
+      }
       else reject("Failed to download audio");
     });
 
