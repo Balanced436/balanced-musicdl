@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     ffmpeg \
     python3 \
+    libchromaprint-tools \
     && rm -rf /var/lib/apt/lists/*
 RUN curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
 
