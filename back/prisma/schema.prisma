@@ -3,6 +3,11 @@ generator client {
   output   = "../generated/prisma"
 }
 
+generator frontend_types {
+  provider = "prisma-client-js"
+  output   = "../../front/node_modules/@shared/prisma"
+}
+
 datasource db {
   provider = "postgresql"
 }

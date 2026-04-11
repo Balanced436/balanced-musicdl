@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Song } from "@shared/prisma";
 
 const useSongs = () => {
   const fn = async () => {
@@ -9,6 +10,6 @@ const useSongs = () => {
       return await request.json();
     }
   };
-  return useQuery({ queryKey: ["SONGS_QUERY_KEY"], queryFn: fn, staleTime: 0 });
+  return useQuery<Song[]>({ queryKey: ["SONGS_QUERY_KEY"], queryFn: fn, staleTime: 0 });
 };
 export default useSongs;
