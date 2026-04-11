@@ -1,4 +1,6 @@
-import './App.css'
-export default function App() {
-    return <p>front</p>
-}
+import "./App.css";
+import { Outlet } from "@tanstack/react-router";
+
+export const RootPage = () => {
+  return <Outlet></Outlet>;
+};
