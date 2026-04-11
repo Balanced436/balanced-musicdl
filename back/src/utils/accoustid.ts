@@ -48,12 +48,13 @@ interface AcoustIDResponse {
     recordings?: Array<{
       id: string;
       title: string;
-      artists?: any[];
+      artists?: unknown[];
     }>;
   }>;
 }
 
 export const getMBIDRecords = async (
+    accoustidClient: string,
   fingerPrint: fingerPrint,
 ): Promise<AcoustIDResponse> => {
   const { duration, fingerprint } = fingerPrint;
@@ -66,7 +67,7 @@ export const getMBIDRecords = async (
   }
 
   const url = new URL("https://api.acoustid.org/v2/lookup");
-  url.searchParams.set("client", client);
+  url.searchParams.set("client", accoustidClient);
   url.searchParams.set("meta", "recordings");
   url.searchParams.set("duration", duration.toString());
   url.searchParams.set("fingerprint", fingerprint);
