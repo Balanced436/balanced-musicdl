@@ -51,6 +51,7 @@ services:
       POSTGRES_USER_FILE: /run/secrets/postgres_user 
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB_FILE: /run/secrets/postgres_db
+      ACCOUSTID_CLIENT_FILE: /run/secrets/accoustid_client
       SONGS_DIR: /data/music
     volumes:
     - ~/Musique:/data/music
@@ -58,6 +59,7 @@ services:
       - postgres_user
       - postgres_password
       - postgres_db
+      - accoustid_client
     depends_on:
       - db
     
@@ -81,6 +83,8 @@ secrets:
     file: ./secrets/postgres_password.txt
   postgres_db:
     file: ./secrets/postgres_db.txt
+  accoustid_client:
+    file: ./secrets/accoustid_client.txt
 
 volumes:
   postgres-data:
