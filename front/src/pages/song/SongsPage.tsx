@@ -1,4 +1,4 @@
-import useSongs from "../../hooks/SongsHooks";
+import { useSongs } from "../../hooks/SongsHooks";
 import { SongTable } from "../../components/Song.tsx";
 import { Song } from "@shared/prisma";
 import { useRouter } from "@tanstack/react-router";
