@@ -10,6 +10,10 @@ const useSongs = () => {
       return await request.json();
     }
   };
-  return useQuery<Song[]>({ queryKey: ["SONGS_QUERY_KEY"], queryFn: fn, staleTime: 0 });
+  return useQuery<Song[]>({
+    queryKey: ["SONGS_QUERY_KEY"],
+    queryFn: fn,
+    staleTime: 0,
+  });
 };
 export default useSongs;
