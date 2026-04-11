@@ -17,7 +17,7 @@ const stream = {
 };
 app.use(morgan(":method :url :body", { stream }));
 app.use(express.urlencoded({ extended: true }));
-app.use("/", sourceRouter);
-app.use("/", donwloadRouter);
+app.use("/api", sourceRouter);
+app.use("/api", donwloadRouter);
 
 export default app;
