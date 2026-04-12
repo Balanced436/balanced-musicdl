@@ -53,6 +53,7 @@ services:
       POSTGRES_DB_FILE: /run/secrets/postgres_db
       ACCOUSTID_CLIENT_FILE: /run/secrets/accoustid_client
       SONGS_DIR: /data/music
+      COVERT_ART_DIR: /data/covert
     volumes:
     - ~/Musique:/data/music
     secrets:

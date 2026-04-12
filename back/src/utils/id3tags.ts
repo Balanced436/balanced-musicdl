@@ -1,6 +1,10 @@
-import { readdirSync, readFileSync, renameSync } from "fs";
+import { readdirSync, renameSync } from "fs";
 import NodeID3 from "node-id3";
 import path from "path";
+import { writeFileSync } from "fs";
+import logger from "./logger.ts";
+import { randomUUID } from "node:crypto";
+
 export const listSong = (): string[] => {
   const songDir = process.env.SONGS_DIR || "/data/music";
   return readdirSync(songDir).map((name) => `${songDir}/${name}`);
@@ -41,4 +45,22 @@ export const renameFileFromTags = (songPath: string) => {
     console.error("Erreur lors du renommage :", error);
     return songPath;
   }
+};
+
+export const saveCoverArt = (songPath: string, outputDir: string) => {
+  logger.info("saveCoverArt");
+
+  const tags = NodeID3.read(songPath);
+  const image = tags.image;
+
+  if (!image || typeof image === "string") {
+    return null;
+  }
+  const coverid = randomUUID();
+  const ext = image.mime === "image/png" ? "png" : "jpg";
+  const fileName = `${outputDir}/${coverid}.${ext}`;
+
+  writeFileSync(fileName, image.imageBuffer);
+
+  return fileName;
 };

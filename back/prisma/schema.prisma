@@ -17,6 +17,7 @@ model Song {
   album       String?
   artist      String?
   title       String?
+  covert      String?
   fileName String
 
    
