@@ -20,7 +20,7 @@ echo "DATABASE_URL=$DATABASE_URL_TEST" >> .env.test
 
 echo "ACCOUSTID_CLIENT=$ACCOUSTID_CLIENT" >> .env
 mkdir -p "$SONGS_DIR"
-mkdir -p "$COVERT_ART_DIR"
+mkdir -p "$COVERS_ART_DIR"
 
 npm install
 npx prisma migrate dev --name init

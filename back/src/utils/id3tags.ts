@@ -58,9 +58,9 @@ export const saveCoverArt = (songPath: string, outputDir: string) => {
   }
   const coverid = randomUUID();
   const ext = image.mime === "image/png" ? "png" : "jpg";
-  const fileName = `${outputDir}/${coverid}.${ext}`;
-
-  writeFileSync(fileName, image.imageBuffer);
+  const fileName = `${coverid}.${ext}`;
+  const fileNamePath = `${outputDir}/${coverid}.${ext}`;
+  writeFileSync(fileNamePath, image.imageBuffer);
 
   return fileName;
 };

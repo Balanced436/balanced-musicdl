@@ -15,6 +15,8 @@ morgan.token("body", (req: Request) => {
 const stream = {
   write: (message: string) => logger.info(message.trim()),
 };
+
+app.use("/covers", express.static("/data/covers"));
 app.use(morgan(":method :url :body", { stream }));
 app.use(express.urlencoded({ extended: true }));
 app.use("/api", sourceRouter);

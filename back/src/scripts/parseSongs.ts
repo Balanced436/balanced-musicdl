@@ -7,14 +7,14 @@ import { prisma } from "../lib/prisma";
 
 async function main() {
   const songs = listSong();
-  const covertDir = process.env.COVERT_ART_DIR || "/data/covert";
+  const coverDir = process.env.COVER_ART_DIR || "/data/covers";
 
   for (const songPath of songs) {
     const tags = parseID3tags(songPath);
     const artist = tags.artist || "Unknown Artist";
     const album = tags.album || "Unknown Album";
     const title = tags.title || "Unknown Title";
-    const covertPath = saveCoverArt(songPath, covertDir);
+    const coverPath = saveCoverArt(songPath, coverDir);
     const filename = songPath.split("/").at(-1);
     if (!filename) {
       throw new Error("No filename ?");
@@ -26,7 +26,7 @@ async function main() {
         artist: artist,
         title: title,
         fileName: filename,
-        covert: covertPath,
+        cover: coverPath,
       },
     });
   }
