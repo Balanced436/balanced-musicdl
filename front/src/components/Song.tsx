@@ -16,6 +16,9 @@ export const Song = ({ song }: SongProps) => {
       <span>album: {song.album}</span>
       <span>creation date: {song.createdAt.toLocaleString()}</span>
       <span>update date: {song.updatedAt.toLocaleString()}</span>
+      {song.cover && (
+        <img height={200} src={`http://localhost:4000/covers/${song.cover}`} />
+      )}
     </div>
   );
 };
@@ -29,8 +32,8 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr style={{ borderBottom: "2px solid #ccc", textAlign: "left" }}>
-            <th>Titre</th>
             <th>Fichier</th>
+            <th>Titre</th>
             <th>Artiste</th>
             <th>Album</th>
           </tr>
@@ -42,10 +45,8 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
               onClick={() => handleSongClick(song)}
               style={{ cursor: "pointer", borderBottom: "1px solid #eee" }}
             >
+              <td>{song.fileName}</td>
               <td>{song.title || "Sans titre"}</td>
-              <td>
-                <code>{song.fileName}</code>
-              </td>
               <td>{song.artist || "Inconnu"}</td>
               <td>{song.album || "N/A"}</td>
             </tr>
