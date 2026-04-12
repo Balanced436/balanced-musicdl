@@ -56,6 +56,7 @@ services:
       COVERT_ART_DIR: /data/covert
     volumes:
     - ~/Musique:/data/music
+    - ~/Images:/data/covert
     secrets:
       - postgres_user
       - postgres_password
