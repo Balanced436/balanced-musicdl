@@ -10,7 +10,7 @@ type SongTableProps = {
 
 export const Song = ({ song }: SongProps) => {
   return (
-    <div>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <span>id: {song.id}</span>
       <span>title: {song.title}</span>
       <span>album: {song.album}</span>

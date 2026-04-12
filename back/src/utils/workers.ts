@@ -14,7 +14,6 @@ export const metadataWorker = async () => {
       logger.info(`metadataWorker: ${job.id}`);
 
       try {
-
         await prisma.download.update({
           where: { id: job.id },
           data: { status: DownloadStatus.ANALYZING },
@@ -29,9 +28,10 @@ export const metadataWorker = async () => {
             title: title,
           },
         });
-
       } catch (error) {
-        logger.error(`metadataWorker: error fetching metadata for ${job.id} ${error}`);
+        logger.error(
+          `metadataWorker: error fetching metadata for ${job.id} ${error}`,
+        );
         await prisma.download.update({
           where: { id: job.id },
           data: { status: DownloadStatus.FAILED },
@@ -66,7 +66,7 @@ export const downloadWorker = async () => {
         const path = process.env.SONGS_DIR || "/data/music";
 
         const filePath = `${path}/${job.title}.mp3`;
-        logger.info(filePath)
+        logger.info(filePath);
         const res: string = await downloadYouTubeAudio(job.videoId, filePath);
         await prisma.download.update({
           where: { id: job.id },
@@ -74,8 +74,6 @@ export const downloadWorker = async () => {
             status: DownloadStatus.COMPLETED,
           },
         });
-
-
       } catch (error) {
         await prisma.download.update({
           where: { id: job.id },
@@ -87,6 +85,5 @@ export const downloadWorker = async () => {
       }
     }
     await new Promise((resolve) => setTimeout(resolve, job ? 100 : 2000));
-
   }
 };

@@ -54,7 +54,7 @@ interface AcoustIDResponse {
 }
 
 export const getMBIDRecords = async (
-    accoustidClient: string,
+  accoustidClient: string,
   fingerPrint: fingerPrint,
 ): Promise<AcoustIDResponse> => {
   const { duration, fingerprint } = fingerPrint;

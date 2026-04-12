@@ -40,13 +40,12 @@ export async function downloadYouTubeAudio(
       if (code === 0) {
         logger.info(`downloadYouTubeAudio: download completed ${outputPath}`);
         resolve(outputPath);
-      }
-      else reject("Failed to download audio");
+      } else reject("Failed to download audio");
     });
 
     process.on("error", (err) => {
       logger.info(`Error executing yt-dlp for video ${videoId}:`, err);
-        //reject(`Error executing yt-dlp: ${err.message}`);
-    })
+      //reject(`Error executing yt-dlp: ${err.message}`);
+    });
   });
 }
