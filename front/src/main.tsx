@@ -11,6 +11,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SongsPage } from "./pages/song/SongsPage.tsx";
 import SongDetailsPage from "./pages/song/SongDetailsPage.tsx";
+import SongEditPage from "./pages/song/SongEditPage.tsx";
 
 const rootRoute = createRootRoute();
 
@@ -32,10 +33,17 @@ export const songDetailsRoute = createRoute({
   component: SongDetailsPage,
 });
 
+export const songEditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/songs/edit/$songId",
+  component: SongEditPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   songsIndexRoute,
   songDetailsRoute,
+  songEditRoute,
 ]);
 
 const client = new QueryClient();

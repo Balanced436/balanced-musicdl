@@ -1,13 +1,18 @@
-import { useParams } from "@tanstack/react-router";
+import {useParams, useRouter} from "@tanstack/react-router";
 import { useSong } from "../../hooks/SongsHooks.tsx";
 import { Song } from "../../components/Song.tsx";
 const SongDetailsPage = () => {
   const { songId } = useParams({ from: "/songs/$songId" });
+  const router = useRouter();
   const { data, isLoading } = useSong(songId);
   if (!data || isLoading) {
     return;
   }
-  return <Song song={data} />;
+
+  const handleEditSong = () => {
+    router.navigate({to: `/songs/edit/${data.id}`});
+  }
+  return <div><button onClick={handleEditSong}>edit</button><Song song={data} /></div>;
 };
 
 export default SongDetailsPage;

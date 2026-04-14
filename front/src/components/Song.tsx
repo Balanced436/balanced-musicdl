@@ -8,6 +8,11 @@ type SongTableProps = {
   onSongClick: (song: SongType) => void;
 };
 
+type SongEditProps = {
+    song: SongType;
+    onSongUpdate: () => void;
+};
+
 export const Song = ({ song }: SongProps) => {
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
@@ -56,3 +61,38 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
     </div>
   );
 };
+
+export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
+
+    const handleSongUpdate = (e) => {
+        e.preventDefault()
+        // handle form values
+        onSongUpdate()
+    }
+    return <form onSubmit={handleSongUpdate} style={{ display: "flex", flexDirection: "column" }}>
+        <label>Artist:</label>
+        <input type={"text"} defaultValue={song.title || "unknow artist"}/>
+
+        <label>Title:</label>
+        <input type={"text"} defaultValue={song.title || "unknow title"}/>
+
+        <label>Album</label>
+        <input type={"text"} defaultValue={song.album || "unknow album"}/>
+
+        <label>Filename</label>
+        <input type={"text"} defaultValue={song.fileName || "unknow album"}/>
+
+        {song.cover && song.cover && (
+            <div>
+                <img height={250} src={`http://localhost:4000/covers/${song.cover}`} />
+            </div>
+
+        )}
+        <div>
+            <button type={"submit"}>update</button>
+        </div>
+    </form>
+
+
+
+}
