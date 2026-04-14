@@ -1,32 +1,83 @@
-import {Router, Request, Response} from "express";
-import {getMBIDRecords, getMusicBrainzRecords} from "../utils/accoustid.ts";
-import {prisma} from "../lib/prisma.ts";
-import {StatusCodes} from "http-status-codes";
+import { Router, Request, Response } from "express";
+import { prisma } from "../lib/prisma.ts";
+import { StatusCodes } from "http-status-codes";
+import {musicBrainzAlbumCover, musicBrainzRecording} from "../utils/musicBrainz.ts";
+import { accoustidLookup } from "../utils/accoustid.ts";
 
-const lookupRouter =  Router()
+const lookupRouter = Router();
 
-lookupRouter.get("/lookup", async (req: Request, res: Response): Promise<any> => {
+const MIN_SCORE_THRESHOLD = 0.5;
 
-    const song = await prisma.song.findUnique({where: {id: "1"}})
-    if (!song) {
-        return res.status(StatusCodes.NOT_FOUND).json({error: "Song not found"})
+lookupRouter.get(
+  "/lookup/:songid",
+  async (req: Request, res: Response): Promise<any> => {
+    try {
+      const { songid } = req.params;
+
+      const song = await prisma.song.findUnique({
+        where: { id: songid },
+        select: { fingerPrint: true },
+      });
+
+      if (!song) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ error: "Song not found" });
+      }
+
+      if (!song.fingerPrint) {
+        return res
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ error: "Song does not have a fingerprint" });
+      }
+
+      const { duration, fingerprint } = JSON.parse(song.fingerPrint);
+      const accoustidClient = process.env.ACCOUSTID_CLIENT;
+
+      if (!accoustidClient) {
+        return res
+          .status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ error: "Accoustid client not configured" });
+      }
+
+      const accoustidResponse = await accoustidLookup(accoustidClient, {
+        duration,
+        fingerprint,
+      });
+      const bestResult = accoustidResponse.results?.[0];
+
+      if (!bestResult || bestResult.recordings?.length === 0) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ error: "No records found" });
+      }
+
+      if (bestResult.score < MIN_SCORE_THRESHOLD) {
+        return res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+          error: "Match found but score is too low",
+          score: bestResult.score,
+        });
+      }
+
+      const mbid = bestResult.recordings[0].id;
+      const musicBrainzMetas = await musicBrainzRecording(mbid);
+
+      const firstRelease = musicBrainzMetas.releases?.[0];
+
+      return res.json({
+        ...musicBrainzMetas,
+        album: firstRelease?.title || "Unknown Album",
+        cover: firstRelease
+          ? musicBrainzAlbumCover(firstRelease.id)
+          : null,
+      });
+    } catch (error) {
+      console.error("Lookup Error:", error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: "An error occurred during metadata lookup",
+      });
     }
-    const fingerPrintString = song.fingerPrint
+  },
+);
 
-    if (!fingerPrintString) {
-        return res.status(StatusCodes.BAD_REQUEST).json({error: "Song does not have a fingerprint"})
-
-    }
-    const fingerPrint = await JSON.parse(fingerPrintString) as {duration: number, fingerprint: string}
-    const ACCOUSTID_CLIENT = process.env.ACCOUSTID_client
-
-    if (!ACCOUSTID_CLIENT){
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({error: "Accoustid client not configured"})
-    }
-    const mbid = await getMBIDRecords(ACCOUSTID_CLIENT,fingerPrint )
-
-    return res.json(mbid)
-})
-
-
-export default lookupRouter
+export default lookupRouter;

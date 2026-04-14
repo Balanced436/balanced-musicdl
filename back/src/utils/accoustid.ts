@@ -45,7 +45,7 @@ interface AcoustIDResponse {
   results: Array<{
     id: string;
     score: number;
-    recordings?: Array<{
+    recordings: Array<{
       id: string;
       title: string;
       artists?: unknown[];

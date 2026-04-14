@@ -4,7 +4,7 @@
 import logger from "../utils/logger";
 import { listSong, parseID3tags, saveCoverArt } from "../utils/id3tags";
 import { prisma } from "../lib/prisma";
-import {computeSongFingerPrint} from "../utils/accoustid.ts";
+import { computeSongFingerPrint } from "../utils/accoustid.ts";
 
 async function main() {
   const songs = listSong();
@@ -17,7 +17,7 @@ async function main() {
     const title = tags.title || "Unknown Title";
     const coverPath = saveCoverArt(songPath, coverDir);
     const filename = songPath.split("/").at(-1);
-    const fingerPrint = await computeSongFingerPrint(songPath)
+    const fingerPrint = await computeSongFingerPrint(songPath);
     if (!filename) {
       throw new Error("No filename ?");
     }
