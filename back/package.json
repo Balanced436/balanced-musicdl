@@ -13,8 +13,8 @@
     "push:test": "dotenv -e .env.test -- npx prisma db push --accept-data-loss",
     "seed:dev": "ts-node prisma/seed.ts",
     "seed:test": "dotenv -e .env.test -- ts-node prisma/seed.ts",
-    "parseSong:dev": "ts-node src/scripts/parseSongs.ts",
-    "parseSong:test": "dotenv -e .env.test --ts-node src/scripts/parseSongs.ts",
+    "processSongs:dev": "ts-node src/scripts/processSongs.ts",
+    "processSongs:test": "dotenv -e .env.test --ts-node src/scripts/processSongs.ts",
     "startWorkers:dev": "ts-node src/scripts/startWorkers.ts"
   },
   "keywords": [],

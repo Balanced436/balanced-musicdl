@@ -5,34 +5,51 @@ import logger from "../utils/logger";
 import { listSong, parseID3tags, saveCoverArt } from "../utils/id3tags";
 import { prisma } from "../lib/prisma";
 import { computeSongFingerPrint } from "../utils/accoustid.ts";
+import path from "path";
+import fs from "fs";
 
 async function main() {
   const songs = listSong();
-  const coverDir = process.env.COVER_ART_DIR || "/data/covers";
 
   for (const songPath of songs) {
+    processSingleSong(songPath);
+  }
+}
+
+export async function processSingleSong(songPath: string) {
+  const coverDir = process.env.COVER_ART_DIR || "/data/covers";
+
+  if (!fs.existsSync(songPath)) {
+    throw new Error(`File not found at path: ${songPath}`);
+  }
+  try {
     const tags = parseID3tags(songPath);
+    const fingerPrint = await computeSongFingerPrint(songPath);
+
     const artist = tags.artist || "Unknown Artist";
     const album = tags.album || "Unknown Album";
     const title = tags.title || "Unknown Title";
+    const filename = path.basename(songPath);
     const coverPath = saveCoverArt(songPath, coverDir);
-    const filename = songPath.split("/").at(-1);
-    const fingerPrint = await computeSongFingerPrint(songPath);
-    if (!filename) {
-      throw new Error("No filename ?");
-    }
-    console.info(filename);
-    await prisma.song.create({
+
+    logger.info(`Processing: ${filename}`);
+
+    return await prisma.song.create({
       data: {
-        album: album,
-        artist: artist,
-        title: title,
+        album,
+        artist,
+        title,
         fileName: filename,
         cover: coverPath,
         fingerPrint: JSON.stringify(fingerPrint),
       },
     });
+
+  } catch (error) {
+    logger.error(`Failed to process song: ${songPath}`, error);
+    throw error;
   }
 }
+
 
 main();
