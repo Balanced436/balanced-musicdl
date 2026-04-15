@@ -1,4 +1,7 @@
-import {useDownload, useDownloadMutation} from "../../hooks/DonwloadHooks.tsx";
+import {
+  useDownload,
+  useDownloadMutation,
+} from "../../hooks/DonwloadHooks.tsx";
 import { DonwloadBar, DownloadTable } from "../../components/Download.tsx";
 
 const DonwloadPage = () => {
@@ -9,7 +12,7 @@ const DonwloadPage = () => {
     try {
       const ytlurl = new URL(url);
       const v = ytlurl.searchParams.get("v");
-      if (!v){
+      if (!v) {
         throw new Error("URL not valid");
       }
       mutate(v);

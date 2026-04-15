@@ -6,6 +6,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  Outlet,
   RouterProvider,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,7 +15,17 @@ import SongDetailsPage from "./pages/song/SongDetailsPage.tsx";
 import SongEditPage from "./pages/song/SongEditPage.tsx";
 import DonwloadPage from "./pages/download/DownloadPage.tsx";
 
-const rootRoute = createRootRoute();
+const rootRoute = createRootRoute({
+  component: () => (
+    <div>
+      <nav style={{ display: "flex", gap: 10, paddingBottom: 10 }}>
+        <a href={"/songs"}>Songs</a>
+        <a href={"/download"}>Download</a>
+      </nav>
+      <Outlet />
+    </div>
+  ),
+});
 
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,

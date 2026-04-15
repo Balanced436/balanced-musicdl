@@ -20,11 +20,10 @@ export const useDownload = () => {
 export const useDownloadMutation = () => {
   const queryClient = useQueryClient();
 
-  const downloadMutationFn = async (v:string) => {
+  const downloadMutationFn = async (v: string) => {
     const response = await fetch(`http://localhost:4000/api/download?v=${v}`, {
       method: "POST",
     });
-
 
     if (!response.ok) {
       throw new Error("Failed to trigger download");
@@ -36,7 +35,6 @@ export const useDownloadMutation = () => {
   return useMutation({
     mutationFn: downloadMutationFn,
     onSuccess: (data) => {
-
       queryClient.invalidateQueries({ queryKey: ["DOWNLOAD_QUERY_KEY"] });
 
       console.log("Download successful", data);
