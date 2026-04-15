@@ -49,7 +49,8 @@ export const downloadWorker = async () => {
   while (true) {
     //logger.info(`Checking for QUEUED_FOR_DOWNLOAD jobs...`);
     const job = await prisma.download.findFirst({
-      where: { status: DownloadStatus.QUEUED_FOR_DOWNLOAD },
+      // where: { status: DownloadStatus.QUEUED_FOR_DOWNLOAD },
+      where: { status: DownloadStatus.AWAITING_CONFIRMATION },
       orderBy: { createdAt: "asc" },
     });
 
