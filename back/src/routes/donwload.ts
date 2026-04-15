@@ -34,3 +34,8 @@ donwloadRouter.post(
     }
   },
 );
+
+donwloadRouter.get("/songs/download",async(req: Request, res:Response):Promise<void> =>{
+    const downloads = await prisma.download.findMany();
+    res.status(StatusCodes.OK).json(downloads);
+})

@@ -34,7 +34,7 @@ export const musicBrainzRecording = async (
 ): Promise<MusicBrainzRecording> => {
   const url = new URL(`https://musicbrainz.org/ws/2/recording/${mbid}`);
   url.searchParams.set("fmt", "json");
-  url.searchParams.set("inc", "artists+releases");
+  url.searchParams.set("inc", "artists+releases+genres");
 
   const requestOptions = {
     headers: {
