@@ -1,6 +1,7 @@
 import { StatusCodes } from "http-status-codes";
 import { DownloadStatus, prisma } from "../lib/prisma";
 import { Router, Request, Response } from "express";
+import logger from "../utils/logger.ts";
 
 export const donwloadRouter = Router();
 
@@ -10,7 +11,7 @@ export const DOWNLOAD_ROUTE_ERROR = {
 } as const;
 
 donwloadRouter.post(
-  "/songs/download",
+  "/download",
   async (req: Request, res: Response): Promise<void> => {
     const url = new URL(req.url, "http://localhost");
     const v = url.searchParams.get("v");
@@ -35,7 +36,11 @@ donwloadRouter.post(
   },
 );
 
-donwloadRouter.get("/songs/download",async(req: Request, res:Response):Promise<void> =>{
+donwloadRouter.get(
+  "/download",
+  async (req: Request, res: Response): Promise<void> => {
+    logger.info("debug router");
     const downloads = await prisma.download.findMany();
     res.status(StatusCodes.OK).json(downloads);
-})
+  },
+);

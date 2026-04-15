@@ -51,7 +51,7 @@ const routeTree = rootRoute.addChildren([
   songsIndexRoute,
   songDetailsRoute,
   songEditRoute,
-  downloadIndexRoute
+  downloadIndexRoute,
 ]);
 
 const client = new QueryClient();
