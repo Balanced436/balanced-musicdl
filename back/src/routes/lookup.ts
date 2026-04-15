@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma.ts";
 import { StatusCodes } from "http-status-codes";
-import {musicBrainzAlbumCover, musicBrainzRecording} from "../utils/musicBrainz.ts";
+import {
+  musicBrainzAlbumCover,
+  musicBrainzRecording,
+} from "../utils/musicBrainz.ts";
 import { accoustidLookup } from "../utils/accoustid.ts";
 
 const lookupRouter = Router();
@@ -67,9 +70,7 @@ lookupRouter.get(
       return res.json({
         ...musicBrainzMetas,
         album: firstRelease?.title || "Unknown Album",
-        cover: firstRelease
-          ? musicBrainzAlbumCover(firstRelease.id)
-          : null,
+        cover: firstRelease ? musicBrainzAlbumCover(firstRelease.id) : null,
       });
     } catch (error) {
       console.error("Lookup Error:", error);

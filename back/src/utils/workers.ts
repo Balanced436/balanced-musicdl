@@ -1,6 +1,7 @@
 import { DownloadStatus, prisma } from "../lib/prisma";
 import logger from "./logger";
 import { downloadYouTubeAudio, getYouTubeTitle } from "./ytb";
+import { processSingleSong } from "../scripts/processSongs.ts";
 
 export const metadataWorker = async () => {
   logger.info("metadataWorker: started");
@@ -69,6 +70,9 @@ export const downloadWorker = async () => {
         const filePath = `${path}/${job.title}.mp3`;
         logger.info(filePath);
         const res: string = await downloadYouTubeAudio(job.videoId, filePath);
+
+        // update database
+        await processSingleSong(res);
         await prisma.download.update({
           where: { id: job.id },
           data: {

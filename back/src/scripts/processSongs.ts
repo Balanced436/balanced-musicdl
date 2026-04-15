@@ -12,7 +12,7 @@ async function main() {
   const songs = listSong();
 
   for (const songPath of songs) {
-    processSingleSong(songPath);
+    await processSingleSong(songPath);
   }
 }
 
@@ -44,12 +44,10 @@ export async function processSingleSong(songPath: string) {
         fingerPrint: JSON.stringify(fingerPrint),
       },
     });
-
   } catch (error) {
     logger.error(`Failed to process song: ${songPath}`, error);
     throw error;
   }
 }
-
 
 main();
