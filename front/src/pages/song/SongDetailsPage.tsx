@@ -1,4 +1,4 @@
-import {useParams, useRouter} from "@tanstack/react-router";
+import { useParams, useRouter } from "@tanstack/react-router";
 import { useSong } from "../../hooks/SongsHooks.tsx";
 import { Song } from "../../components/Song.tsx";
 const SongDetailsPage = () => {
@@ -10,9 +10,14 @@ const SongDetailsPage = () => {
   }
 
   const handleEditSong = () => {
-    router.navigate({to: `/songs/edit/${data.id}`});
-  }
-  return <div><button onClick={handleEditSong}>edit</button><Song song={data} /></div>;
+    router.navigate({ to: `/songs/edit/${data.id}` });
+  };
+  return (
+    <div>
+      <button onClick={handleEditSong}>edit</button>
+      <Song song={data} />
+    </div>
+  );
 };
 
 export default SongDetailsPage;

@@ -1,4 +1,5 @@
 import { Download } from "@shared/prisma";
+import { useState } from "react";
 interface DownloadTableProps {
   download: Download[];
 }
@@ -30,5 +31,28 @@ export const DownloadTable = ({ download }: DownloadTableProps) => {
         </tbody>
       </table>
     </div>
+  );
+};
+
+interface DownloadBarProps {
+  onDownload: (url: string) => void;
+}
+export const DonwloadBar = ({ onDownload }: DownloadBarProps) => {
+  const [url, setUrl] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onDownload(url);
+  };
+  return (
+    <form onSubmit={handleSubmit}>
+      <label id={"url"}>URL</label>
+      <input
+        id={"url"}
+        type={"text"}
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+      />
+      <button type="submit">Download</button>
+    </form>
   );
 };

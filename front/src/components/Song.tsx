@@ -9,8 +9,8 @@ type SongTableProps = {
 };
 
 type SongEditProps = {
-    song: SongType;
-    onSongUpdate: () => void;
+  song: SongType;
+  onSongUpdate: () => void;
 };
 
 export const Song = ({ song }: SongProps) => {
@@ -63,36 +63,39 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
 };
 
 export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
+  const handleSongUpdate = (e) => {
+    e.preventDefault();
+    // handle form values
+    onSongUpdate();
+  };
+  return (
+    <form
+      onSubmit={handleSongUpdate}
+      style={{ display: "flex", flexDirection: "column" }}
+    >
+      <label>Artist:</label>
+      <input type={"text"} defaultValue={song.title || "unknow artist"} />
 
-    const handleSongUpdate = (e) => {
-        e.preventDefault()
-        // handle form values
-        onSongUpdate()
-    }
-    return <form onSubmit={handleSongUpdate} style={{ display: "flex", flexDirection: "column" }}>
-        <label>Artist:</label>
-        <input type={"text"} defaultValue={song.title || "unknow artist"}/>
+      <label>Title:</label>
+      <input type={"text"} defaultValue={song.title || "unknow title"} />
 
-        <label>Title:</label>
-        <input type={"text"} defaultValue={song.title || "unknow title"}/>
+      <label>Album</label>
+      <input type={"text"} defaultValue={song.album || "unknow album"} />
 
-        <label>Album</label>
-        <input type={"text"} defaultValue={song.album || "unknow album"}/>
+      <label>Filename</label>
+      <input type={"text"} defaultValue={song.fileName || "unknow album"} />
 
-        <label>Filename</label>
-        <input type={"text"} defaultValue={song.fileName || "unknow album"}/>
-
-        {song.cover && song.cover && (
-            <div>
-                <img height={250} src={`http://localhost:4000/covers/${song.cover}`} />
-            </div>
-
-        )}
+      {song.cover && song.cover && (
         <div>
-            <button type={"submit"}>update</button>
+          <img
+            height={250}
+            src={`http://localhost:4000/covers/${song.cover}`}
+          />
         </div>
+      )}
+      <div>
+        <button type={"submit"}>update</button>
+      </div>
     </form>
-
-
-
-}
+  );
+};
