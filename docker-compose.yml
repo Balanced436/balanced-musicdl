@@ -6,7 +6,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "3000:3000"
+      - "${FRONT_PORT}:3000"
     develop:
       watch:
         - action: sync
@@ -39,54 +39,35 @@ services:
         - action: rebuild
           path: ./back/entrypoint.sh
     ports:
-      - "4000:4000"
-      - "4001:4001"
-      - "5555:5555"
-      - "9229:9229"
+      - "${BACK_PORT_MAIN}:4000"
+      - "${BACK_PORT_SEC}:4001"
+      - "${BACK_PORT_PRISMA}:5555"
+      - "${BACK_PORT_DEBUG}:9229"
       
     environment:
-      POSTGRES_HOST: db
-      POSTGRES_PORT: 5432
-      NODE_ENV: development
-      POSTGRES_USER_FILE: /run/secrets/postgres_user 
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_DB_FILE: /run/secrets/postgres_db
-      ACCOUSTID_CLIENT_FILE: /run/secrets/accoustid_client
+      NODE_ENV: ${NODE_ENV}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      ACCOUSTID_CLIENT: ${ACCOUSTID_CLIENT}
       SONGS_DIR: /data/music
       COVERS_ART_DIR: /data/covers
     volumes:
     - ~/Musique:/data/music
     - ~/Images:/data/covers
-    secrets:
-      - postgres_user
-      - postgres_password
-      - postgres_db
-      - accoustid_client
     depends_on:
       - db
-    
 
   db:
     image: postgres:17
     environment:
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_DB_FILE: /run/secrets/postgres_db
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - postgres-data:/var/lib/postgresql/data
-    secrets:
-      - postgres_user
-      - postgres_password
-      - postgres_db
-secrets:
-  postgres_user:
-    file: ./secrets/postgres_user.txt
-  postgres_password:
-    file: ./secrets/postgres_password.txt
-  postgres_db:
-    file: ./secrets/postgres_db.txt
-  accoustid_client:
-    file: ./secrets/accoustid_client.txt
 
 volumes:
   postgres-data:
