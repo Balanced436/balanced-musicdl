@@ -31,7 +31,7 @@ export async function downloadYouTubeAudio(
       `${outputPath}`,
       "--audio-quality",
       "0",
-      "--write-thumbnail",
+      "--embed-thumbnail",
       `--`,
       videoId,
     ]);

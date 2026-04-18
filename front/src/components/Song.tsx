@@ -1,4 +1,7 @@
 import { Song as SongType } from "@shared/prisma";
+import { useState } from "react";
+import { useSongLookup } from "../hooks/SongsHooks.tsx";
+
 type SongProps = {
   song: SongType;
 };
@@ -21,9 +24,14 @@ export const Song = ({ song }: SongProps) => {
       <span>album: {song.album}</span>
       <span>creation date: {song.createdAt.toLocaleString()}</span>
       <span>update date: {song.updatedAt.toLocaleString()}</span>
-      {song.cover && (
-        <img height={200} src={`http://localhost:4000/covers/${song.cover}`} />
-      )}
+      <div>
+        {song.cover && (
+          <img
+            height={200}
+            src={`http://localhost:4000/covers/${song.cover}`}
+          />
+        )}
+      </div>
     </div>
   );
 };
@@ -63,10 +71,21 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
 };
 
 export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
+  const [formData, setFormData] = useState<SongType>(song);
+  const {
+    data: suggestion,
+    refetch: fetchSuggestion,
+    isFetching: isFetchingSuggestion,
+  } = useSongLookup(song.id);
+
   const handleSongUpdate = (e) => {
     e.preventDefault();
-    // handle form values
     onSongUpdate();
+  };
+
+  const handleLookup = async (e) => {
+    e.preventDefault();
+    fetchSuggestion();
   };
   return (
     <form
@@ -74,27 +93,51 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
       style={{ display: "flex", flexDirection: "column" }}
     >
       <label>Artist:</label>
-      <input type={"text"} defaultValue={song.title || "unknow artist"} />
+      <input
+        type={"text"}
+        defaultValue={suggestion?.artist || formData.artist || "unknow artist"}
+        onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
+      />
+      {suggestion?.artist && <span>{suggestion?.artist}</span>}
 
       <label>Title:</label>
-      <input type={"text"} defaultValue={song.title || "unknow title"} />
+      <input
+        type={"text"}
+        defaultValue={formData.title || "unknow title"}
+        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+      />
+      {suggestion?.title && <span>{suggestion?.title}</span>}
 
       <label>Album</label>
-      <input type={"text"} defaultValue={song.album || "unknow album"} />
+      <input
+        type={"text"}
+        defaultValue={formData.album || "unknow album"}
+        onChange={(e) => setFormData({ ...formData, album: e.target.value })}
+      />
+      {suggestion?.album && <span>{suggestion?.album}</span>}
 
       <label>Filename</label>
-      <input type={"text"} defaultValue={song.fileName || "unknow album"} />
+      <input type={"text"} defaultValue={formData.fileName || "unknow album"} />
 
       {song.cover && song.cover && (
         <div>
           <img
-            height={250}
+            height={200}
             src={`http://localhost:4000/covers/${song.cover}`}
           />
         </div>
       )}
+
+      {suggestion?.cover && (
+        <div>
+          <img height={200} src={suggestion.cover} />
+        </div>
+      )}
       <div>
         <button type={"submit"}>update</button>
+        <button type={"submit"} onClick={handleLookup}>
+          lookup
+        </button>
       </div>
     </form>
   );

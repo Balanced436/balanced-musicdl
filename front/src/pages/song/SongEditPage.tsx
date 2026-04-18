@@ -10,7 +10,12 @@ const SongEditPage = () => {
   const handleSongUpdate = () => {
     console.log("handleSongUpdate");
   };
-  return <SongEdit song={data} onSongUpdate={() => handleSongUpdate()} />;
+  return (
+    <div>
+      <button type={"submit"}>lookup</button>
+      <SongEdit song={data} onSongUpdate={() => handleSongUpdate()} />
+    </div>
+  );
 };
 
 export default SongEditPage;
