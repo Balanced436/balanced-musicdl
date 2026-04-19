@@ -70,3 +70,31 @@ export const useSongLookup = (songId: string) => {
     }),
   });
 };
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+export const useMutateSong = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ songId, data }: { songId: string; data: Partial<Song> }) => {
+      const response = await fetch(`http://localhost:4000/api/songs/${songId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update song");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["SONGS_QUERY_KEY"] });
+      queryClient.invalidateQueries({ queryKey: ["SONGS_QUERY_KEY", variables.songId] });
+    },
+  });
+};

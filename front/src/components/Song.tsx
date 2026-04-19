@@ -13,7 +13,7 @@ type SongTableProps = {
 
 type SongEditProps = {
   song: SongType;
-  onSongUpdate: () => void;
+  onSongUpdate: (song: Partial<SongType>) => void;
 };
 
 export const Song = ({ song }: SongProps) => {
@@ -80,64 +80,87 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
 
   const handleSongUpdate = (e) => {
     e.preventDefault();
-    onSongUpdate();
+    onSongUpdate(formData);
   };
 
   const handleLookup = async (e) => {
     e.preventDefault();
     fetchSuggestion();
   };
+
+  const handleAcceptSuggestion = async (e) => {
+    e.preventDefault();
+    if (suggestion) onSongUpdate(suggestion)
+
+
+  }
   return (
     <form
       onSubmit={handleSongUpdate}
       style={{ display: "flex", flexDirection: "column" }}
     >
-      <label>Artist:</label>
-      <input
-        type={"text"}
-        defaultValue={suggestion?.artist || formData.artist || "unknow artist"}
-        onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
-      />
-      {suggestion?.artist && <span>{suggestion?.artist}</span>}
+      <div>
+        <label>Artist:</label>
+        <input
+          type={"text"}
+          defaultValue={
+            suggestion?.artist || formData.artist || "unknow artist"
+          }
+          onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
+        />
+        {suggestion?.artist && <span>{suggestion?.artist}</span>}
+      </div>
 
-      <label>Title:</label>
-      <input
-        type={"text"}
-        defaultValue={formData.title || "unknow title"}
-        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-      />
-      {suggestion?.title && <span>{suggestion?.title}</span>}
+      <div>
+        <label>Title:</label>
+        <input
+          type={"text"}
+          defaultValue={formData.title || "unknow title"}
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        />
 
-      <label>Album</label>
-      <input
-        type={"text"}
-        defaultValue={formData.album || "unknow album"}
-        onChange={(e) => setFormData({ ...formData, album: e.target.value })}
-      />
-      {suggestion?.album && <span>{suggestion?.album}</span>}
+        {suggestion?.title && <span>{suggestion?.title}</span>}
+      </div>
 
-      <label>Filename</label>
-      <input type={"text"} defaultValue={formData.fileName || "unknow album"} />
+      <div>
+        <label>Album</label>
+        <input
+          type={"text"}
+          defaultValue={formData.album || "unknow album"}
+          onChange={(e) => setFormData({ ...formData, album: e.target.value })}
+        />
+        {suggestion?.album && <span>{suggestion?.album}</span>}
+      </div>
 
-      {song.cover && song.cover && (
-        <div>
-          <img
-            height={200}
-            src={`http://localhost:4000/covers/${song.cover}`}
-          />
-        </div>
-      )}
+      <div>
+        <label>Filename</label>
+        <input
+          type={"text"}
+          defaultValue={formData.fileName || "unknow album"}
+        />
 
-      {suggestion?.cover && (
-        <div>
-          <img height={200} src={suggestion.cover} />
-        </div>
-      )}
+        {song.cover && song.cover && (
+          <div>
+            <img
+              height={200}
+              src={`http://localhost:4000/covers/${song.cover}`}
+            />
+          </div>
+        )}
+
+        {suggestion?.cover && (
+          <div>
+            <img height={200} src={suggestion.cover} />
+          </div>
+        )}
+      </div>
       <div>
         <button type={"submit"}>update</button>
         <button type={"submit"} onClick={handleLookup}>
           lookup
         </button>
+
+        {suggestion && <button onClick={handleAcceptSuggestion}>accept suggestion</button>}
       </div>
     </form>
   );
