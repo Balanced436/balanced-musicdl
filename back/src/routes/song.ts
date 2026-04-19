@@ -5,6 +5,7 @@ import { updateID3tags } from "../utils/id3tags.ts";
 import logger from "../utils/logger.ts";
 import { downloadCoverArt } from "../utils/musicBrainz.ts";
 import NodeID3 from "node-id3";
+import path from "path";
 
 export const songRouter = Router();
 
@@ -59,42 +60,61 @@ songRouter.patch(
     const { album, title, artist, year, cover } = req.body;
 
     try {
-      const updatedSong = await prisma.song.update({
-        where: { id },
-        data: { album, title, artist, year },
-      });
+      const song = await prisma.song.findUnique({ where: { id } });
+      if (!song) {
+        res.status(StatusCodes.NOT_FOUND).json({ error: "Song not found" });
+        return;
+      }
 
-      const songPath = `${process.env.SONGS_DIR}/${updatedSong.fileName || title}`;
-
+      const songPath = path.join(
+        process.env.SONGS_DIR || "/data/music",
+        song.fileName,
+      );
+      const updateData: any = {};
       const updatedTags: NodeID3.Tags = {};
 
-      // TODO: check how id3tags update handle undefined and null
-      if (album) updatedTags.album = album;
-      if (title) updatedTags.title = title;
-      if (artist) updatedTags.artist = artist;
+      if (album) {
+        updateData.album = album;
+        updatedTags.album = album;
+      }
+      if (title) {
+        updateData.title = title;
+        updatedTags.title = title;
+      }
+      if (artist) {
+        updateData.artist = artist;
+        updatedTags.artist = artist;
+      }
+      if (year) {
+        updateData.year = String(year);
+        updatedTags.year = String(year);
+      }
 
       if (cover) {
         try {
           const { filePath, id3Image } = await downloadCoverArt(cover);
-          const coverName = filePath.split("/").at(-1);
-
-          // update the song cover name
-          await prisma.song.update({
-            where: { id },
-            data: { cover: coverName },
-          });
-
+          updateData.cover = path.basename(filePath);
           updatedTags.image = id3Image;
         } catch (error) {
-          logger.error("Cover download/save failed:", error);
+          logger.error(
+            "Cover download failed, continuing with metadata only",
+            error,
+          );
         }
       }
 
-      updateID3tags(songPath, updatedTags);
+      const updatedSong = await prisma.song.update({
+        where: { id },
+        data: updateData,
+      });
+
+      if (Object.keys(updatedTags).length > 0) {
+        updateID3tags(songPath, updatedTags);
+      }
 
       res.json(updatedSong);
     } catch (error) {
-      logger.error(error);
+      logger.error("Patch Error:", error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ error: "Update failed" });

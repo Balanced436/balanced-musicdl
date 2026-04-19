@@ -1,7 +1,4 @@
-import {
-  updateID3tags,
-  renameFileFromTags,
-} from "../utils/id3tags";
+import { updateID3tags, renameFileFromTags } from "../utils/id3tags";
 import fs from "fs";
 import NodeID3 from "node-id3";
 import { mkdirSync, rmSync } from "node:fs";
