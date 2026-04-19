@@ -1,10 +1,10 @@
 import { Router, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { StatusCodes } from "http-status-codes";
-import {  randomUUID } from "node:crypto";
 import { updateID3tags } from "../utils/id3tags.ts";
 import logger from "../utils/logger.ts";
-import path from "path";
+import { downloadCoverArt } from "../utils/musicBrainz.ts";
+import NodeID3 from "node-id3";
 
 export const songRouter = Router();
 
@@ -52,62 +52,55 @@ songRouter.get(
   },
 );
 
-
-songRouter.patch("/songs/:id", async (req: Request, res: Response): Promise<void> => {
+songRouter.patch(
+  "/songs/:id",
+  async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     const { album, title, artist, year, cover } = req.body;
 
     try {
-        const updatedSong = await prisma.song.update({
+      const updatedSong = await prisma.song.update({
+        where: { id },
+        data: { album, title, artist, year },
+      });
+
+      const songPath = `${process.env.SONGS_DIR}/${updatedSong.fileName || title}`;
+
+      const updatedTags: NodeID3.Tags = {};
+
+      // TODO: check how id3tags update handle undefined and null
+      if (album) updatedTags.album = album;
+      if (title) updatedTags.title = title;
+      if (artist) updatedTags.artist = artist;
+
+      if (cover) {
+        try {
+          const { filePath, id3Image } = await downloadCoverArt(cover);
+          const coverName = filePath.split("/").at(-1);
+
+          // update the song cover name
+          await prisma.song.update({
             where: { id },
-            data: { album, title, artist, year },
-        });
+            data: { cover: coverName },
+          });
 
-        const songPath = `${process.env.SONGS_DIR}/${updatedSong.fileName || title}`;
-
-        let imagePath: string | undefined;
-
-        if (cover) {
-            try {
-                const dir = process.env.COVERS_ART_DIR || "./covers";
-                const fileName = `${randomUUID()}.jpg`;
-                imagePath = path.join(dir, fileName);
-
-                const response = await fetch(cover, {
-                    method: 'GET',
-                    redirect: 'follow',
-                });
-
-                if (!response.ok) throw new Error(`Fetch failed: ${response.statusText}`);
-
-                const arrayBuffer = await response.arrayBuffer();
-                const buffer = Buffer.from(arrayBuffer);
-
-                await prisma.song.update({
-                    where: { id },
-                    data: { cover: fileName },
-                });
-
-            } catch (error) {
-                logger.error("Cover download/save failed:", error);
-            }
+          updatedTags.image = id3Image;
+        } catch (error) {
+          logger.error("Cover download/save failed:", error);
         }
+      }
 
-        updateID3tags(songPath, {
-            album,
-            title,
-            artist,
-            year: year?.toString(),
-            image: imagePath
-        });
+      updateID3tags(songPath, updatedTags);
 
-
-        res.json(updatedSong);
+      res.json(updatedSong);
     } catch (error) {
-        console.error(error);
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error: "Update failed" });
+      logger.error(error);
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ error: "Update failed" });
     }
-});
+  },
+);
 songRouter.delete(
   "/songs/:id",
   async (req: Request, res: Response): Promise<void> => {

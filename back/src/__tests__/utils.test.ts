@@ -1,10 +1,11 @@
 import {
-  parseID3tags,
   updateID3tags,
   renameFileFromTags,
 } from "../utils/id3tags";
 import fs from "fs";
 import NodeID3 from "node-id3";
+import { mkdirSync, rmSync } from "node:fs";
+import { downloadCoverArt } from "../utils/musicBrainz.ts";
 
 describe("utils functions", () => {
   const fixturePath = "src/__tests__/fixtures/last light.mp3";
@@ -52,4 +53,32 @@ describe("utils functions", () => {
       expect(fs.existsSync(tempPath)).toBe(false);
     });
   });
+});
+
+describe("downloadCoverArt", () => {
+  const mockDir = "src/__tests__/fixtures/covers";
+  const realImageUrl =
+    "https://coverartarchive.org/release/468deced-0848-447e-b93a-0b51db3303ae/front-250";
+
+  beforeAll(async () => {
+    process.env.COVERS_ART_DIR = mockDir;
+    if (!fs.existsSync(mockDir)) {
+      mkdirSync(mockDir, { recursive: true });
+    }
+  });
+
+  afterAll(async () => {
+    if (fs.existsSync(mockDir)) {
+      rmSync(mockDir, { recursive: true, force: true });
+    }
+  });
+
+  it("should download a real image from the web and save it", async () => {
+    // TODO also test id3Image
+    const { filePath, id3Image } = await downloadCoverArt(realImageUrl);
+    expect(fs.existsSync(filePath)).toBe(true);
+    expect(filePath).toContain(mockDir);
+    const stats = fs.statSync(filePath);
+    expect(stats.size).toBeGreaterThan(1000);
+  }, 15000);
 });
