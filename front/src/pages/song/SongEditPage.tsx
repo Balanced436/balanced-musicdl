@@ -1,9 +1,9 @@
 import { useParams } from "@tanstack/react-router";
-import {useMutateSong, useSong} from "../../hooks/SongsHooks.tsx";
+import { useMutateSong, useSong } from "../../hooks/SongsHooks.tsx";
 import { SongEdit } from "../../components/Song.tsx";
 const SongEditPage = () => {
   const { songId } = useParams({ from: "/songs/edit/$songId" });
-  const {mutate} = useMutateSong()
+  const { mutate } = useMutateSong();
   const { data, isLoading } = useSong(songId);
   if (!data || isLoading) {
     return;
@@ -11,8 +11,7 @@ const SongEditPage = () => {
   const handleSongUpdate = (song) => {
     console.log("handleSongUpdate");
     console.log(song);
-    mutate({songId: songId, data: song});
-
+    mutate({ songId: songId, data: song });
   };
   return (
     <div>

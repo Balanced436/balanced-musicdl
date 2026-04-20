@@ -90,10 +90,8 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
 
   const handleAcceptSuggestion = async (e) => {
     e.preventDefault();
-    if (suggestion) onSongUpdate(suggestion)
-
-
-  }
+    if (suggestion) onSongUpdate(suggestion);
+  };
   return (
     <form
       onSubmit={handleSongUpdate}
@@ -160,7 +158,9 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
           lookup
         </button>
 
-        {suggestion && <button onClick={handleAcceptSuggestion}>accept suggestion</button>}
+        {suggestion && (
+          <button onClick={handleAcceptSuggestion}>accept suggestion</button>
+        )}
       </div>
     </form>
   );
