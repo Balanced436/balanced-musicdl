@@ -6,6 +6,7 @@ import cors from "cors";
 import { donwloadRouter } from "./routes/donwload";
 import logger from "./utils/logger";
 import lookupRouter from "./routes/lookup.ts";
+import { adminRouter } from "./routes/admin.ts";
 app.use(cors());
 app.use(express.json());
 //app.use(morgan('combined'))
@@ -23,5 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", sourceRouter);
 app.use("/api", donwloadRouter);
 app.use("/api", lookupRouter);
+app.use("/admin", adminRouter);
 
 export default app;

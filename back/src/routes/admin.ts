@@ -7,7 +7,7 @@ import logger from "../utils/logger.ts";
 
 export const adminRouter: Router = Router();
 
-adminRouter.post("/reset", async (req: Request, res: Response) => {
+adminRouter.post("/clear", async (req: Request, res: Response) => {
   try {
     const songs = await prisma.song.findMany();
     const coversDir = process.env.COVERS_ART_DIR || "/data/covers";

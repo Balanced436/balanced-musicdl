@@ -99,7 +99,7 @@ export const useMutateSong = () => {
         throw new Error("Failed to update song");
       }
 
-      return response.json();
+      return await response.json();
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["SONGS_QUERY_KEY"] });

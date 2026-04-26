@@ -14,6 +14,7 @@ import { SongsPage } from "./pages/song/SongsPage.tsx";
 import SongDetailsPage from "./pages/song/SongDetailsPage.tsx";
 import SongEditPage from "./pages/song/SongEditPage.tsx";
 import DonwloadPage from "./pages/download/DownloadPage.tsx";
+import SettingsPage from "./pages/settings/SettingsPage.tsx";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -21,6 +22,7 @@ const rootRoute = createRootRoute({
       <nav style={{ display: "flex", gap: 10, paddingBottom: 10 }}>
         <a href={"/songs"}>Songs</a>
         <a href={"/download"}>Download</a>
+        <a href={"/settings"}>Settings</a>
       </nav>
       <Outlet />
     </div>
@@ -57,12 +59,19 @@ export const downloadIndexRoute = createRoute({
   component: DonwloadPage,
 });
 
+export const settingsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/settings",
+  component: SettingsPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   songsIndexRoute,
   songDetailsRoute,
   songEditRoute,
   downloadIndexRoute,
+  settingsRoute,
 ]);
 
 const client = new QueryClient();
