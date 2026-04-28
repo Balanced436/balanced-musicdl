@@ -14,6 +14,7 @@ const SongDetailsPage = () => {
   };
   return (
     <div>
+      <h1>Song details</h1>
       <button onClick={handleEditSong}>edit</button>
       <Song song={data} />
     </div>

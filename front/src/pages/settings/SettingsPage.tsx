@@ -15,7 +15,9 @@ const SettingsPage = () => {
   };
   return (
     <div>
+      <h1>Settings</h1>
       <div>
+        <h2>Data</h2>
         <span>Clear data</span>
         <button onClick={handleClearData}>OK</button>
       </div>

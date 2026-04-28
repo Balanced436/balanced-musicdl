@@ -11,5 +11,10 @@ export const SongsPage = () => {
   if (!data || isLoading) {
     return null;
   }
-  return <SongTable songs={data} onSongClick={handleSongClick} />;
+  return (
+    <div>
+      <h1>Songs</h1>
+      <SongTable songs={data} onSongClick={handleSongClick} />
+    </div>
+  );
 };

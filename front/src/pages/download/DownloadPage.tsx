@@ -28,6 +28,7 @@ const DonwloadPage = () => {
   }
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <h1>Download</h1>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <DonwloadBar onDownload={handleDownload} />
       </div>
