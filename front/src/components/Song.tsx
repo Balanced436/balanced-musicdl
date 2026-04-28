@@ -1,6 +1,6 @@
 import { Song as SongType } from "@shared/prisma";
 import { useState } from "react";
-import { useSongLookup } from "../hooks/SongsHooks.tsx";
+import { useMbidLookup, useSongLookup } from "../hooks/SongsHooks.tsx";
 
 type SongProps = {
   song: SongType;
@@ -72,11 +72,17 @@ export const SongTable = ({ songs, onSongClick }: SongTableProps) => {
 
 export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
   const [formData, setFormData] = useState<SongType>(song);
+  const [mbid, setMbid] = useState("");
   const {
     data: suggestion,
     refetch: fetchSuggestion,
     isFetching: isFetchingSuggestion,
   } = useSongLookup(song.id);
+
+  const {
+    data: mbidSuggestion,
+    refetch: fetchMbidSuggestion,
+  } = useMbidLookup(mbid);
 
   const handleSongUpdate = (e) => {
     e.preventDefault();
@@ -88,9 +94,16 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
     fetchSuggestion();
   };
 
+  const handleMbidLookup = async (e) => {
+    e.preventDefault();
+    fetchMbidSuggestion();
+  };
+
+  const currentSuggestion = mbidSuggestion || suggestion;
+
   const handleAcceptSuggestion = async (e) => {
     e.preventDefault();
-    if (suggestion) onSongUpdate(suggestion);
+    if (currentSuggestion) onSongUpdate(currentSuggestion);
   };
   return (
     <form
@@ -102,11 +115,11 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
         <input
           type={"text"}
           defaultValue={
-            suggestion?.artist || formData.artist || "unknow artist"
+            currentSuggestion?.artist || formData.artist || "unknow artist"
           }
           onChange={(e) => setFormData({ ...formData, artist: e.target.value })}
         />
-        {suggestion?.artist && <span>{suggestion?.artist}</span>}
+        {currentSuggestion?.artist && <span>{currentSuggestion?.artist}</span>}
       </div>
 
       <div>
@@ -117,7 +130,7 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
 
-        {suggestion?.title && <span>{suggestion?.title}</span>}
+        {currentSuggestion?.title && <span>{currentSuggestion?.title}</span>}
       </div>
 
       <div>
@@ -127,7 +140,7 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
           defaultValue={formData.album || "unknow album"}
           onChange={(e) => setFormData({ ...formData, album: e.target.value })}
         />
-        {suggestion?.album && <span>{suggestion?.album}</span>}
+        {currentSuggestion?.album && <span>{currentSuggestion?.album}</span>}
       </div>
 
       <div>
@@ -137,7 +150,7 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
           defaultValue={formData.fileName || "unknow album"}
         />
 
-        {song.cover && song.cover && (
+        {song.cover && (
           <div>
             <img
               height={200}
@@ -146,19 +159,35 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
           </div>
         )}
 
-        {suggestion?.cover && (
+        {currentSuggestion?.cover && (
           <div>
-            <img height={200} src={suggestion.cover} />
+            <img height={200} src={currentSuggestion.cover} />
           </div>
         )}
       </div>
-      <div>
+
+      <div style={{ marginTop: "20px", borderTop: "1px solid #ccc", paddingTop: "10px" }}>
+        <label>MBID (MusicBrainz ID):</label>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            placeholder="Enter MBID..."
+            value={mbid}
+            onChange={(e) => setMbid(e.target.value)}
+          />
+          <button type="button" onClick={handleMbidLookup}>
+            Lookup by MBID
+          </button>
+        </div>
+      </div>
+
+      <div style={{ marginTop: "20px" }}>
         <button type={"submit"}>update</button>
-        <button type={"submit"} onClick={handleLookup}>
-          lookup
+        <button type={"button"} onClick={handleLookup}>
+          lookup by Fingerprint
         </button>
 
-        {suggestion && (
+        {currentSuggestion && (
           <button onClick={handleAcceptSuggestion}>accept suggestion</button>
         )}
       </div>

@@ -18,6 +18,9 @@ model Song {
   artist      String?
   title       String?
   cover      String?
+  Year      DateTime?
+  artistAlbum String?
+  Genre String?
   fileName String
   fingerPrint String?
 

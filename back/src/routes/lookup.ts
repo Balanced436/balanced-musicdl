@@ -11,6 +11,17 @@ const lookupRouter = Router();
 
 const MIN_SCORE_THRESHOLD = 0.5;
 
+const fetchMetadata = async (mbid: string) => {
+  const musicBrainzMetas = await musicBrainzRecording(mbid);
+  const firstRelease = musicBrainzMetas.releases?.[0];
+
+  return {
+    ...musicBrainzMetas,
+    album: firstRelease?.title || "Unknown Album",
+    cover: firstRelease ? musicBrainzAlbumCover(firstRelease.id) : null,
+  };
+};
+
 lookupRouter.get(
   "/lookup/:songid",
   async (req: Request, res: Response): Promise<any> => {
@@ -63,17 +74,27 @@ lookupRouter.get(
       }
 
       const mbid = bestResult.recordings[0].id;
-      const musicBrainzMetas = await musicBrainzRecording(mbid);
+      const metadata = await fetchMetadata(mbid);
 
-      const firstRelease = musicBrainzMetas.releases?.[0];
-
-      return res.json({
-        ...musicBrainzMetas,
-        album: firstRelease?.title || "Unknown Album",
-        cover: firstRelease ? musicBrainzAlbumCover(firstRelease.id) : null,
-      });
+      return res.json(metadata);
     } catch (error) {
       console.error("Lookup Error:", error);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        error: "An error occurred during metadata lookup",
+      });
+    }
+  },
+);
+
+lookupRouter.get(
+  "/lookup/mbid/:mbid",
+  async (req: Request, res: Response): Promise<any> => {
+    try {
+      const { mbid } = req.params;
+      const metadata = await fetchMetadata(mbid);
+      return res.json(metadata);
+    } catch (error) {
+      console.error("MBID Lookup Error:", error);
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
         error: "An error occurred during metadata lookup",
       });

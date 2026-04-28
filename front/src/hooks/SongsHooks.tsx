@@ -71,6 +71,28 @@ export const useSongLookup = (songId: string) => {
   });
 };
 
+export const useMbidLookup = (mbid: string) => {
+  return useQuery<LookupResponse, Error, Partial<Song>>({
+    queryKey: ["mbidLookup", mbid],
+    queryFn: async (): Promise<LookupResponse> => {
+      const response = await fetch(
+        `http://localhost:4000/api/lookup/mbid/${mbid}`,
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch MBID Lookup");
+      }
+      return response.json();
+    },
+    enabled: !!mbid,
+    select: (data): Partial<Song> => ({
+      title: data.title,
+      artist: data["artist-credit"]?.[0]?.name || "Unknown Artist",
+      album: data.releases?.[0]?.title || data.title,
+      cover: data.cover,
+    }),
+  });
+};
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useMutateSong = () => {
