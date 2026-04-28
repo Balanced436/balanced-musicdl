@@ -79,10 +79,8 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
     isFetching: isFetchingSuggestion,
   } = useSongLookup(song.id);
 
-  const {
-    data: mbidSuggestion,
-    refetch: fetchMbidSuggestion,
-  } = useMbidLookup(mbid);
+  const { data: mbidSuggestion, refetch: fetchMbidSuggestion } =
+    useMbidLookup(mbid);
 
   const handleSongUpdate = (e) => {
     e.preventDefault();
@@ -166,7 +164,13 @@ export const SongEdit = ({ song, onSongUpdate }: SongEditProps) => {
         )}
       </div>
 
-      <div style={{ marginTop: "20px", borderTop: "1px solid #ccc", paddingTop: "10px" }}>
+      <div
+        style={{
+          marginTop: "20px",
+          borderTop: "1px solid #ccc",
+          paddingTop: "10px",
+        }}
+      >
         <label>MBID (MusicBrainz ID):</label>
         <div style={{ display: "flex", gap: "10px" }}>
           <input

@@ -4,8 +4,8 @@ import fs from "node:fs/promises";
 import { StatusCodes } from "http-status-codes";
 import path from "path";
 import logger from "../utils/logger.ts";
-import {listSong} from "../utils/id3tags.ts";
-import {processSingleSong} from "../scripts/processSongs.ts";
+import { listSong } from "../utils/id3tags.ts";
+import { processSingleSong } from "../scripts/processSongs.ts";
 
 export const adminRouter: Router = Router();
 
@@ -39,15 +39,15 @@ adminRouter.post("/clear", async (req: Request, res: Response) => {
   }
 });
 
-adminRouter.post("/import",async (req: Request, res: Response) => {
-    try {
-        const songs = listSong();
+adminRouter.post("/resync", async (req: Request, res: Response) => {
+  try {
+    const songs = listSong();
 
-        for (const songPath of songs) {
-            await processSingleSong(songPath);
-        }
-        res.status(StatusCodes.OK).json({ message: "import successful" });
-    }catch (e) {
-        res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+    for (const songPath of songs) {
+      await processSingleSong(songPath);
     }
+    res.status(StatusCodes.OK).json({ message: "import successful" });
+  } catch (e) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+  }
 })

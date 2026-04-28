@@ -1,14 +1,17 @@
-import useAdminHook from "../../hooks/AdminHooks.ts";
+import useClearDataHook from "../../hooks/AdminHooks.ts";
+import { useResyncDataHook } from "../../hooks/AdminHooks.ts";
 
 const SettingsPage = () => {
-  const { mutate: clearData } = useAdminHook();
-  const handleClearData = (e) => {
+  const { mutate: clearData } = useClearDataHook();
+  const { mutate: resyncData } = useResyncDataHook();
+  const handleClearData = (e: React.MouseEvent) => {
     e.preventDefault();
     clearData();
   };
 
-  const handleImportSong = (e) => {
+  const handleResyncData = (e: React.MouseEvent) => {
     e.preventDefault();
+    resyncData();
   };
   return (
     <div>
@@ -19,7 +22,7 @@ const SettingsPage = () => {
 
       <div>
         <span>Resync data</span>
-        <button onClick={handleImportSong}>OK</button>
+        <button onClick={handleResyncData}>OK</button>
       </div>
     </div>
   );
